@@ -36,7 +36,7 @@ Basically filter is a JSON object. The type is like below:
 ```
 type Filter = {
   field: string
-  value: string
+  value: any
   operator: 'like' | '=' | '<>' | '<' | '>' | '<=' | '>=' | 'in' | 'not in'
 }
 ```
