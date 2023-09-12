@@ -13,13 +13,13 @@ CRUD Controller is a base controller that can be extended by other controller to
 
 Index method support filtering and sorting by query string. Available query strings are:
 
-| Query String | Default Value | Available Value                                    | Example                                                       |
-| ------------ | ------------- | -------------------------------------------------- | ------------------------------------------------------------- |
-| sort         | created_at    | Use table column as value                          | sort=name                                                     |
-| order        | desc          | asc or desc                                        | order=asc                                                     |
-| filter       | desc          | JSON object                                        | filter={"field": "name", "value": "John", "operator": "like"} |
-| page         | 1             | Any unsigned integer value                         | page=1                                                        |
-| limit        | 10            | Any unsigned integer value. Use 0 to show all data | limit=20                                                      |
+| Query String | Default Value | Available Value                                    | Example                                                         |
+| ------------ | ------------- | -------------------------------------------------- | --------------------------------------------------------------- |
+| sort         | created_at    | Use table column as value                          | sort=name                                                       |
+| order        | desc          | asc or desc                                        | order=asc                                                       |
+| filter       | desc          | Array of JSON object                               | filter=[{"field": "name", "value": "John", "operator": "like"}] |
+| page         | 1             | Any unsigned integer value                         | page=1                                                          |
+| limit        | 10            | Any unsigned integer value. Use 0 to show all data | limit=20                                                        |
 
 To use CrudController class, extend it from child controller that will used it as parent
 

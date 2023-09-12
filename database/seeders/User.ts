@@ -6,6 +6,7 @@ export default class extends BaseSeeder {
     await UserFactory.merge({
       email: 'admin@example.com',
       password: 'secret',
+      isAdmin: true,
     })
       .with('profile')
       .create()

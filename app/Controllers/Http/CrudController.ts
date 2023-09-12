@@ -103,7 +103,7 @@ export default abstract class CrudController {
    *
    * Example for sort: sort=created_at. Default is set to created_at
    * Example for order: order=asc. Default is set to desc. Available value only asc and desc
-   * Example for filter: filter={"field": "name", "value": "John", "operator": "like"}
+   * Example for filter: filter=[{"field": "name", "value": "John", "operator": "like"}]. Filter can be multiple
    * Example for page: page=2
    * Example for limit: limit=10. Default is set to 10. Set to 0 for no limit
    */
@@ -111,16 +111,16 @@ export default abstract class CrudController {
     const result = model.query().orderBy(qs.sort || 'created_at', qs.order || 'desc')
 
     if (qs.filter) {
-      const parsedFilter: Filter = JSON.parse(qs.filter)
+      const parsedFilters: Filter[] = JSON.parse(qs.filter)
 
-      if (!parsedFilter.field.includes('.')) {
+      parsedFilters.map((parsedFilter) => {
         return this.doWhereQuery(
           result,
           parsedFilter.field,
           parsedFilter.value,
           parsedFilter.operator
         )
-      }
+      })
     }
 
     return result
