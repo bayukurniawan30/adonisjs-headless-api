@@ -1,4 +1,4 @@
-import { BaseModel } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, LucidModel, LucidRow, ModelQueryBuilderContract } from '@ioc:Adonis/Lucid/Orm'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
 type Filter = {
@@ -108,62 +108,73 @@ export default abstract class CrudController {
    * Example for limit: limit=10. Default is set to 10. Set to 0 for no limit
    */
   private parseQueryString(model: typeof BaseModel, qs: any) {
-    const result = model.query()
-    // Parse sort
-    // Set created_at with desc as default value if not present
-    if (qs.hasOwnProperty('sort')) {
-      result.orderBy(qs.sort, qs.order)
-    } else {
-      result.orderBy('created_at', 'desc')
-    }
+    const result = model.query().orderBy(qs.sort || 'created_at', qs.order || 'desc')
 
-    // Parse filter
-    // Format of the filter is
-    if (qs.hasOwnProperty('filter')) {
+    if (qs.filter) {
       const parsedFilter: Filter = JSON.parse(qs.filter)
-      switch (parsedFilter.operator) {
-        case 'like':
-          result.whereLike(parsedFilter.field, `%${parsedFilter.value}%`)
-          break
 
-        case '=':
-          result.where(parsedFilter.field, parsedFilter.value)
-          break
-
-        case '<>':
-          result.whereNot(parsedFilter.field, parsedFilter.value)
-          break
-
-        case '<':
-          result.where(parsedFilter.field, '<', parseInt(parsedFilter.value))
-          break
-
-        case '>':
-          result.where(parsedFilter.field, '>', parseInt(parsedFilter.value))
-          break
-
-        case '<=':
-          result.where(parsedFilter.field, '<=', parseInt(parsedFilter.value))
-          break
-
-        case '>=':
-          result.where(parsedFilter.field, '>=', parseInt(parsedFilter.value))
-          break
-
-        case 'in':
-          const arrayInValue = parsedFilter.value.split(',')
-          result.whereIn(parsedFilter.field, arrayInValue)
-          break
-
-        case 'not in':
-          const arrayNotInValue = parsedFilter.value.split(',')
-          result.whereNotIn(parsedFilter.field, arrayNotInValue)
-          break
-
-        default:
-          break
+      if (!parsedFilter.field.includes('.')) {
+        return this.doWhereQuery(
+          result,
+          parsedFilter.field,
+          parsedFilter.value,
+          parsedFilter.operator
+        )
       }
     }
+
     return result
+  }
+
+  private doWhereQuery(
+    query: ModelQueryBuilderContract<LucidModel, LucidRow>,
+    field: string,
+    value: any,
+    operator: string
+  ): ModelQueryBuilderContract<LucidModel, LucidRow> {
+    switch (operator) {
+      case 'like':
+        query.whereLike(field, `%${value}%`)
+        break
+
+      case '=':
+        query.where(field, value)
+        break
+
+      case '<>':
+        query.whereNot(field, value)
+        break
+
+      case '<':
+        query.where(field, '<', parseInt(value))
+        break
+
+      case '>':
+        query.where(field, '>', parseInt(value))
+        break
+
+      case '<=':
+        query.where(field, '<=', parseInt(value))
+        break
+
+      case '>=':
+        query.where(field, '>=', parseInt(value))
+        break
+
+      case 'in':
+        const arrayInValue = value.split(',')
+        query.whereIn(field, arrayInValue)
+        break
+
+      case 'not in':
+        const arrayNotInValue = value.split(',')
+        query.whereNotIn(field, arrayNotInValue)
+        break
+
+      default:
+        break
+    }
+
+    return query
   }
 }
