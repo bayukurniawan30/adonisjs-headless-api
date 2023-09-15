@@ -13,6 +13,8 @@ import {
 import { v4 as uuid } from 'uuid'
 import Profile from './Profile'
 import Media from './Media'
+import Collection from './Collection'
+import Singleton from './Singleton'
 
 export default class User extends BaseModel {
   @hasOne(() => Profile)
@@ -20,6 +22,12 @@ export default class User extends BaseModel {
 
   @hasMany(() => Media)
   public medias: HasMany<typeof Media>
+
+  @hasMany(() => Collection)
+  public collections: HasMany<typeof Collection>
+
+  @hasMany(() => Singleton)
+  public singletons: HasMany<typeof Singleton>
 
   public static selfAssignPrimaryKey = true
 

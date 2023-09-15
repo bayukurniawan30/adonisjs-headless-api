@@ -25,7 +25,8 @@
     "@adonisjs/lucid",
     "@adonisjs/auth",
     "adonisjs-cloudinary",
-    "@adonisjs/bouncer"
+    "@adonisjs/bouncer",
+    "@adonisjs/lucid-slugify"
   ],
   "aceProviders": [
     "@adonisjs/repl"
@@ -51,5 +52,5 @@
   "testProviders": [
     "@japa/preset-adonis/TestsProvider"
   ],
-  "lastCompiledAt": "2023-09-15T01:00:17.086Z"
+  "lastCompiledAt": "2023-09-15T09:03:05.215Z"
 }

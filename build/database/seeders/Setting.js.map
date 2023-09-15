@@ -1,0 +1,1 @@
+{"version":3,"file":"Setting.js","sourceRoot":"","sources":["../../../database/seeders/Setting.ts"],"names":[],"mappings":";;;;;AAAA,uFAAiD;AACjD,uFAAwC;AAExC,eAAqB,SAAQ,gBAAU;IAC9B,KAAK,CAAC,GAAG;QACd,MAAM,iBAAO,CAAC,UAAU,CAAC;YACvB;gBACE,GAAG,EAAE,aAAa;gBAClB,KAAK,EAAE,WAAW;aACnB;YACD;gBACE,GAAG,EAAE,aAAa;gBAClB,KAAK,EAAE,QAAQ;aAChB;SACF,CAAC,CAAA;IACJ,CAAC;CACF;AAbD,4BAaC"}

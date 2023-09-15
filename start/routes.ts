@@ -34,6 +34,9 @@ Route.group(() => {
     Route.get('/me', 'AuthController.me')
     Route.get('/logout', 'AuthController.logout')
 
-    Route.resource('medias', 'MediasController')
+    Route.resource('medias', 'MediasController').except(['update']).apiOnly()
+    Route.resource('collections', 'CollectionsController').apiOnly()
+    Route.resource('available-fields', 'AvailableFieldsController')
+    Route.resource('settings', 'SettingsController').apiOnly().only(['index', 'show', 'update'])
   }).middleware('auth')
 }).prefix('api')

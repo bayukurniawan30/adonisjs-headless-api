@@ -18,6 +18,8 @@ const Orm_1 = global[Symbol.for('ioc.use')]("Adonis/Lucid/Orm");
 const uuid_1 = require("uuid");
 const Profile_1 = __importDefault(require("./Profile"));
 const Media_1 = __importDefault(require("./Media"));
+const Collection_1 = __importDefault(require("./Collection"));
+const Singleton_1 = __importDefault(require("./Singleton"));
 class User extends Orm_1.BaseModel {
     static async createUUID(user) {
         user.id = (0, uuid_1.v4)();
@@ -37,6 +39,14 @@ __decorate([
     (0, Orm_1.hasMany)(() => Media_1.default),
     __metadata("design:type", Object)
 ], User.prototype, "medias", void 0);
+__decorate([
+    (0, Orm_1.hasMany)(() => Collection_1.default),
+    __metadata("design:type", Object)
+], User.prototype, "collections", void 0);
+__decorate([
+    (0, Orm_1.hasMany)(() => Singleton_1.default),
+    __metadata("design:type", Object)
+], User.prototype, "singletons", void 0);
 __decorate([
     (0, Orm_1.column)({ isPrimary: true }),
     __metadata("design:type", String)

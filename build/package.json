@@ -59,6 +59,7 @@
     "@adonisjs/bouncer": "^2.3.0",
     "@adonisjs/core": "^5.9.0",
     "@adonisjs/lucid": "^18.4.0",
+    "@adonisjs/lucid-slugify": "^2.2.1",
     "@adonisjs/repl": "^3.1.11",
     "adonisjs-cloudinary": "^0.1.6",
     "luxon": "^3.4.2",

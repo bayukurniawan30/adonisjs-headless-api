@@ -52,7 +52,6 @@ export default class MediasController extends CrudController {
       const upload = await cloudinary.upload(payload.file, uniqueTime, {
         resource_type: resourceType,
       })
-      console.log('🚀 ~ file: MediasController.ts:53 ~ MediasController ~ store ~ upload:', upload)
       refId = upload.public_id
       url = upload.secure_url
 

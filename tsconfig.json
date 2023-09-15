@@ -32,7 +32,8 @@
       "@adonisjs/lucid",
       "@adonisjs/auth",
       "adonisjs-cloudinary",
-      "@adonisjs/bouncer"
+      "@adonisjs/bouncer",
+      "@adonisjs/lucid-slugify"
     ]
   }
 }
