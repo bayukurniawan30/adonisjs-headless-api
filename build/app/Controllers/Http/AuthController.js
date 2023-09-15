@@ -25,7 +25,8 @@ class AuthController {
         response.send(result);
     }
     async me({ auth, response }) {
-        const user = await auth.use('api').authenticate();
+        const authenticateUser = await auth.use('api').authenticate();
+        const user = await User_1.default.query().where('id', authenticateUser.id).preload('profile').first();
         response.send(user);
     }
     async logout({ auth, response }) {

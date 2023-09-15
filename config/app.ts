@@ -232,3 +232,9 @@ export const profiler: ProfilerConfig = {
 |
 */
 export const validator: ValidatorConfig = {}
+
+export const uploadPath: string = 'uploads'
+
+export const appUrl: string =
+  (Env.get('HTTP_PROTOCOL') === 'https' ? 'https://' : 'http://') +
+  (Env.get('NODE_ENV') === 'production' ? Env.get('HOST') : `${Env.get('HOST')}:${Env.get('PORT')}`)

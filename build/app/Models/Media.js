@@ -13,69 +13,71 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const luxon_1 = require("luxon");
-const Hash_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Hash"));
 const Orm_1 = global[Symbol.for('ioc.use')]("Adonis/Lucid/Orm");
 const uuid_1 = require("uuid");
-const Profile_1 = __importDefault(require("./Profile"));
-const Media_1 = __importDefault(require("./Media"));
-class User extends Orm_1.BaseModel {
-    static async createUUID(user) {
-        user.id = (0, uuid_1.v4)();
+const User_1 = __importDefault(require("./User"));
+const app_1 = global[Symbol.for('ioc.use')]("Config/app");
+class Media extends Orm_1.BaseModel {
+    static async createUUID(media) {
+        media.id = (0, uuid_1.v4)();
     }
-    static async hashPassword(user) {
-        if (user.$dirty.password) {
-            user.password = await Hash_1.default.make(user.password);
+    get public_url() {
+        if (!this.url.includes('http')) {
+            return `${app_1.appUrl}/${this.url}`;
+        }
+        else {
+            return this.url;
         }
     }
 }
-User.selfAssignPrimaryKey = true;
+Media.table = 'medias';
+Media.selfAssignPrimaryKey = true;
 __decorate([
-    (0, Orm_1.hasOne)(() => Profile_1.default),
+    (0, Orm_1.belongsTo)(() => User_1.default),
     __metadata("design:type", Object)
-], User.prototype, "profile", void 0);
-__decorate([
-    (0, Orm_1.hasMany)(() => Media_1.default),
-    __metadata("design:type", Object)
-], User.prototype, "medias", void 0);
+], Media.prototype, "user", void 0);
 __decorate([
     (0, Orm_1.column)({ isPrimary: true }),
     __metadata("design:type", String)
-], User.prototype, "id", void 0);
+], Media.prototype, "id", void 0);
 __decorate([
     (0, Orm_1.column)(),
     __metadata("design:type", String)
-], User.prototype, "email", void 0);
+], Media.prototype, "userId", void 0);
 __decorate([
-    (0, Orm_1.column)({ serializeAs: null }),
+    (0, Orm_1.column)(),
     __metadata("design:type", String)
-], User.prototype, "password", void 0);
+], Media.prototype, "url", void 0);
 __decorate([
     (0, Orm_1.column)(),
-    __metadata("design:type", Boolean)
-], User.prototype, "isAdmin", void 0);
+    __metadata("design:type", String)
+], Media.prototype, "type", void 0);
 __decorate([
     (0, Orm_1.column)(),
-    __metadata("design:type", Object)
-], User.prototype, "rememberMeToken", void 0);
+    __metadata("design:type", Number)
+], Media.prototype, "size", void 0);
+__decorate([
+    (0, Orm_1.column)(),
+    __metadata("design:type", String)
+], Media.prototype, "refId", void 0);
 __decorate([
     Orm_1.column.dateTime({ autoCreate: true }),
     __metadata("design:type", luxon_1.DateTime)
-], User.prototype, "createdAt", void 0);
+], Media.prototype, "createdAt", void 0);
 __decorate([
     Orm_1.column.dateTime({ autoCreate: true, autoUpdate: true }),
     __metadata("design:type", luxon_1.DateTime)
-], User.prototype, "updatedAt", void 0);
+], Media.prototype, "updatedAt", void 0);
+__decorate([
+    (0, Orm_1.computed)(),
+    __metadata("design:type", Object),
+    __metadata("design:paramtypes", [])
+], Media.prototype, "public_url", null);
 __decorate([
     (0, Orm_1.beforeCreate)(),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [User]),
+    __metadata("design:paramtypes", [Media]),
     __metadata("design:returntype", Promise)
-], User, "createUUID", null);
-__decorate([
-    (0, Orm_1.beforeSave)(),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [User]),
-    __metadata("design:returntype", Promise)
-], User, "hashPassword", null);
-exports.default = User;
-//# sourceMappingURL=User.js.map
+], Media, "createUUID", null);
+exports.default = Media;
+//# sourceMappingURL=Media.js.map

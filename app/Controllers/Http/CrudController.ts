@@ -7,11 +7,23 @@ type Filter = {
   operator: 'like' | '=' | '<>' | '<' | '>' | '<=' | '>=' | 'in' | 'not in'
 }
 
+/**
+ * This is a base controller to do CRUD operation
+ * Built in filter, sort, and pagination
+ * The child class can override these function
+ * To use this controller, extend it from child class
+ * Example: export default class UsersController extends CrudController {...}
+ */
 export default abstract class CrudController {
   protected abstract model: typeof BaseModel
   protected relationships
+  protected policy
 
-  public async index({ request, response }: HttpContextContract) {
+  public async index({ request, response, bouncer }: HttpContextContract) {
+    if (this.policy) {
+      await bouncer.with(this.policy).authorize('viewList')
+    }
+
     // Require query string module
     const querystring = require('querystring')
 
@@ -21,11 +33,15 @@ export default abstract class CrudController {
     const qs = request.toJSON().query
 
     let processedModel = model.query()
+    // set default page and limit
     const pagination = {
       page: 1,
       limit: 10,
     }
 
+    // check if request has query string
+    // if provided, do the filter, sort, order
+    // if not, apply the default pagination and sort, without filter
     if (qs && qs.length > 0) {
       const parsedQs = querystring.parse(qs)
       const qsObject = JSON.parse(JSON.stringify(parsedQs))
@@ -47,17 +63,15 @@ export default abstract class CrudController {
       }
     }
 
-    if (this.relationships.length > 0) {
+    // preload relationships
+    // can preload multiple relationships if array of relationship provided in child controller
+    if (this.relationships && this.relationships.length > 0) {
       this.relationships.map((relationship) => {
         return processedModel.preload(relationship)
       })
     }
 
     const result = await processedModel.paginate(pagination.page, pagination.limit)
-
-    if (result.length === 0) {
-      return response.status(404).json({ message: 'Not Found' })
-    }
 
     return response.status(200).json(result)
   }
@@ -66,7 +80,7 @@ export default abstract class CrudController {
     const model = this.model
     const data = model.query().where('id', request.param('id'))
 
-    if (this.relationships.length > 0) {
+    if (this.relationships && this.relationships.length > 0) {
       this.relationships.map((relationship) => {
         return data.preload(relationship)
       })

@@ -25,10 +25,15 @@ Route.get('/', async () => {
 })
 
 Route.group(() => {
+  // Route.resource('users', 'UsersController')
+
   Route.post('/login', 'AuthController.login')
 
   Route.group(() => {
+    // User account related routes
     Route.get('/me', 'AuthController.me')
     Route.get('/logout', 'AuthController.logout')
+
+    Route.resource('medias', 'MediasController')
   }).middleware('auth')
 }).prefix('api')

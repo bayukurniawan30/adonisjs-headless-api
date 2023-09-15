@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validator = exports.profiler = exports.logger = exports.http = exports.appKey = void 0;
+exports.appUrl = exports.uploadPath = exports.validator = exports.profiler = exports.logger = exports.http = exports.appKey = void 0;
 const proxy_addr_1 = __importDefault(require("proxy-addr"));
 const Env_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Env"));
 exports.appKey = Env_1.default.get('APP_KEY');
@@ -36,4 +36,7 @@ exports.profiler = {
     whitelist: [],
 };
 exports.validator = {};
+exports.uploadPath = 'uploads';
+exports.appUrl = (Env_1.default.get('HTTP_PROTOCOL') === 'https' ? 'https://' : 'http://') +
+    (Env_1.default.get('NODE_ENV') === 'production' ? Env_1.default.get('HOST') : `${Env_1.default.get('HOST')}:${Env_1.default.get('PORT')}`);
 //# sourceMappingURL=app.js.map

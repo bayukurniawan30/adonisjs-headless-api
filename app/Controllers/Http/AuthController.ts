@@ -30,7 +30,8 @@ export default class AuthController {
   }
 
   public async me({ auth, response }: HttpContextContract) {
-    const user = await auth.use('api').authenticate()
+    const authenticateUser = await auth.use('api').authenticate()
+    const user = await User.query().where('id', authenticateUser.id).preload('profile').first()
     response.send(user)
   }
 

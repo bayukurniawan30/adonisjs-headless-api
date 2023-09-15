@@ -1,7 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class CrudController {
-    async index({ request, response }) {
+    async index({ request, response, bouncer }) {
+        if (this.policy) {
+            await bouncer.with(this.policy).authorize('viewList');
+        }
         const querystring = require('querystring');
         const model = this.model;
         const qs = request.toJSON().query;
@@ -27,21 +30,18 @@ class CrudController {
                 }
             }
         }
-        if (this.relationships.length > 0) {
+        if (this.relationships && this.relationships.length > 0) {
             this.relationships.map((relationship) => {
                 return processedModel.preload(relationship);
             });
         }
         const result = await processedModel.paginate(pagination.page, pagination.limit);
-        if (result.length === 0) {
-            return response.status(404).json({ message: 'Not Found' });
-        }
         return response.status(200).json(result);
     }
     async show({ request, response }) {
         const model = this.model;
         const data = model.query().where('id', request.param('id'));
-        if (this.relationships.length > 0) {
+        if (this.relationships && this.relationships.length > 0) {
             this.relationships.map((relationship) => {
                 return data.preload(relationship);
             });
