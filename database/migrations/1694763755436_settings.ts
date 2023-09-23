@@ -8,6 +8,7 @@ export default class extends BaseSchema {
       table.uuid('id').primary()
       table.string('key').notNullable().unique()
       table.text('value', 'mediumtext').notNullable()
+      table.jsonb('selectable').nullable()
 
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL

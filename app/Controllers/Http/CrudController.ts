@@ -86,7 +86,7 @@ export default abstract class CrudController {
       })
     }
 
-    const result = await data
+    const result = await data.firstOrFail()
     return response.status(200).json(result)
   }
 

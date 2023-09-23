@@ -3,7 +3,6 @@ import Hash from '@ioc:Adonis/Core/Hash'
 import {
   column,
   beforeSave,
-  BaseModel,
   beforeCreate,
   hasOne,
   HasOne,
@@ -15,8 +14,9 @@ import Profile from './Profile'
 import Media from './Media'
 import Collection from './Collection'
 import Singleton from './Singleton'
+import AppBaseModel from './AppBaseModel'
 
-export default class User extends BaseModel {
+export default class User extends AppBaseModel {
   @hasOne(() => Profile)
   public profile: HasOne<typeof Profile>
 

@@ -1,9 +1,10 @@
 import { DateTime } from 'luxon'
-import { BaseModel, BelongsTo, beforeCreate, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
+import { BelongsTo, beforeCreate, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
 import { v4 as uuid } from 'uuid'
 import Collection from './Collection'
+import AppBaseModel from './AppBaseModel'
 
-export default class CollectionItem extends BaseModel {
+export default class CollectionItem extends AppBaseModel {
   @belongsTo(() => Collection)
   public collection: BelongsTo<typeof Collection>
 

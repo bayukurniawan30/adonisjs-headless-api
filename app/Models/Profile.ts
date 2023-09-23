@@ -1,9 +1,10 @@
 import { DateTime } from 'luxon'
-import { BaseModel, BelongsTo, beforeCreate, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
+import { BelongsTo, beforeCreate, belongsTo, column, computed } from '@ioc:Adonis/Lucid/Orm'
 import { v4 as uuid } from 'uuid'
 import User from './User'
+import AppBaseModel from './AppBaseModel'
 
-export default class Profile extends BaseModel {
+export default class Profile extends AppBaseModel {
   @belongsTo(() => User)
   public user: BelongsTo<typeof User>
 
@@ -30,5 +31,10 @@ export default class Profile extends BaseModel {
   @beforeCreate()
   public static async createUUID(profile: Profile) {
     profile.id = uuid()
+  }
+
+  @computed()
+  public get fullName() {
+    return this.firstName + ' ' + this.lastName
   }
 }

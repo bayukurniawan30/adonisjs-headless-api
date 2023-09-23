@@ -1,19 +1,12 @@
 import { DateTime } from 'luxon'
-import {
-  BaseModel,
-  BelongsTo,
-  HasOne,
-  beforeCreate,
-  belongsTo,
-  column,
-  hasOne,
-} from '@ioc:Adonis/Lucid/Orm'
+import { BelongsTo, HasOne, beforeCreate, belongsTo, column, hasOne } from '@ioc:Adonis/Lucid/Orm'
 import SingletonItem from './SingletonItem'
 import User from './User'
 import { slugify } from '@ioc:Adonis/Addons/LucidSlugify'
 import { v4 as uuid } from 'uuid'
+import AppBaseModel from './AppBaseModel'
 
-export default class Singleton extends BaseModel {
+export default class Singleton extends AppBaseModel {
   @belongsTo(() => User)
   public user: BelongsTo<typeof User>
 

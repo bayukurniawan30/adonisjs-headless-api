@@ -1,17 +1,11 @@
 import { DateTime } from 'luxon'
-import {
-  BaseModel,
-  BelongsTo,
-  beforeCreate,
-  belongsTo,
-  column,
-  computed,
-} from '@ioc:Adonis/Lucid/Orm'
+import { BelongsTo, beforeCreate, belongsTo, column, computed } from '@ioc:Adonis/Lucid/Orm'
 import { v4 as uuid } from 'uuid'
 import User from './User'
 import { appUrl } from 'Config/app'
+import AppBaseModel from './AppBaseModel'
 
-export default class Media extends BaseModel {
+export default class Media extends AppBaseModel {
   public static table = 'medias'
 
   @belongsTo(() => User)
@@ -49,7 +43,7 @@ export default class Media extends BaseModel {
   }
 
   @computed()
-  public get public_url() {
+  public get publicUrl() {
     if (!this.url.includes('http')) {
       return `${appUrl}/${this.url}`
     } else {
