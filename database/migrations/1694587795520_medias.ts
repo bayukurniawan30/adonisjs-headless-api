@@ -9,6 +9,7 @@ export default class extends BaseSchema {
       table.string('type').notNullable()
       table.integer('size').notNullable()
       table.string('url').notNullable()
+      table.string('thumbnail_url').nullable()
       table.string('ref_id').nullable()
       table.uuid('user_id').references('users.id').onDelete('CASCADE')
 

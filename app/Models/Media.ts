@@ -23,6 +23,9 @@ export default class Media extends AppBaseModel {
   public url: string
 
   @column()
+  public thumbnailUrl: string
+
+  @column()
   public type: string
 
   @column()

@@ -8,6 +8,7 @@ import { schema } from '@ioc:Adonis/Core/Validator'
 import Env from '@ioc:Adonis/Core/Env'
 import Application from '@ioc:Adonis/Core/Application'
 import { uploadPath } from 'Config/app'
+import cloudinaryConfig from 'Config/cloudinary'
 
 export default class MediasController extends CrudController {
   protected model = Media
@@ -36,6 +37,7 @@ export default class MediasController extends CrudController {
     // then create a new data in database
     let refId: string | null = null
     let url
+    let thumbnailUrl
 
     if (Env.get('STORAGE_WRAPPER') === 'cloudinary') {
       // this is specific for cloudinary
@@ -55,9 +57,25 @@ export default class MediasController extends CrudController {
       refId = upload.public_id
       url = upload.secure_url
 
+      // create thumbnail, use the transformation feature in cloudinary
+      const thumbnailUpload = await cloudinary.upload(
+        payload.file,
+        `${cloudinaryConfig.thumbnailPrefixName}${uniqueTime}`,
+        {
+          resource_type: resourceType,
+          transformation: {
+            crop: 'fill',
+            width: 250,
+            height: 250,
+          },
+        }
+      )
+      thumbnailUrl = thumbnailUpload.secure_url
+
       const model = this.model
       const result = await model.create({
         url,
+        thumbnailUrl,
         type: fileType,
         size: fileSize,
         refId,

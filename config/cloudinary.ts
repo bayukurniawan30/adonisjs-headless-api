@@ -24,6 +24,8 @@ const cloudinaryConfig: CloudinaryConfig = {
     height: 150,
     crop: 'fit',
   },
+
+  thumbnailPrefixName: 'thumb_',
 }
 
 export default cloudinaryConfig
