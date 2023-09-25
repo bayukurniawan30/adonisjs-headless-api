@@ -9,6 +9,7 @@ import Env from '@ioc:Adonis/Core/Env'
 import Application from '@ioc:Adonis/Core/Application'
 import { uploadPath } from 'Config/app'
 import cloudinaryConfig from 'Config/cloudinary'
+import sharp from 'sharp'
 
 export default class MediasController extends CrudController {
   protected model = Media
@@ -37,7 +38,7 @@ export default class MediasController extends CrudController {
     // then create a new data in database
     let refId: string | null = null
     let url
-    let thumbnailUrl
+    let thumbnailUrl: string = ''
 
     if (Env.get('STORAGE_WRAPPER') === 'cloudinary') {
       // this is specific for cloudinary
@@ -57,20 +58,22 @@ export default class MediasController extends CrudController {
       refId = upload.public_id
       url = upload.secure_url
 
-      // create thumbnail, use the transformation feature in cloudinary
-      const thumbnailUpload = await cloudinary.upload(
-        payload.file,
-        `${cloudinaryConfig.thumbnailPrefixName}${uniqueTime}`,
-        {
-          resource_type: resourceType,
-          transformation: {
-            crop: 'fill',
-            width: 250,
-            height: 250,
-          },
-        }
-      )
-      thumbnailUrl = thumbnailUpload.secure_url
+      if (fileType === 'image') {
+        // create thumbnail, use the transformation feature in cloudinary
+        const thumbnailUpload = await cloudinary.upload(
+          payload.file,
+          `${cloudinaryConfig.thumbnailPrefixName}${uniqueTime}`,
+          {
+            resource_type: resourceType,
+            transformation: {
+              crop: 'fill',
+              width: 250,
+              height: 250,
+            },
+          }
+        )
+        thumbnailUrl = thumbnailUpload.secure_url
+      }
 
       const model = this.model
       const result = await model.create({
@@ -88,9 +91,23 @@ export default class MediasController extends CrudController {
       })
       const filePath = `${uploadPath}/${fileName}`
 
+      let thumbnailFilePath = ''
+      if (fileType === 'image') {
+        thumbnailFilePath = `${uploadPath}/${cloudinaryConfig.thumbnailPrefixName}${fileName}`
+        // create thumbnail, use sharp library
+        await sharp(`${Application.publicPath(uploadPath)}/${fileName}`)
+          .resize({ width: 250, height: 250, fit: 'cover' })
+          .toFile(
+            `${Application.publicPath(uploadPath)}/${
+              cloudinaryConfig.thumbnailPrefixName
+            }${fileName}`
+          )
+      }
+
       const model = this.model
       const result = await model.create({
         url: filePath,
+        thumbnailUrl: thumbnailFilePath,
         type: fileType,
         size: fileSize,
       })
