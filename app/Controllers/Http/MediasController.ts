@@ -52,10 +52,26 @@ export default class MediasController extends CrudController {
     // then create a new data in database
     let refId: string | null = null
     let url
+    let mediaType = ''
     // below is a variable for image media
     let thumbnailUrl: string = ''
     let width: number = 0
     let height: number = 0
+
+    // other than image and video, it will be treated as document
+    switch (fileType) {
+      case 'image':
+        mediaType = 'image'
+        break
+
+      case 'video':
+        mediaType = 'video'
+        break
+
+      default:
+        mediaType = 'document'
+        break
+    }
 
     if (Env.get('STORAGE_WRAPPER') === 'cloudinary') {
       // this is specific for cloudinary
@@ -100,7 +116,7 @@ export default class MediasController extends CrudController {
       const result = await model.create({
         url,
         thumbnailUrl,
-        type: fileType,
+        type: mediaType,
         size: fileSize,
         width,
         height,
@@ -115,7 +131,6 @@ export default class MediasController extends CrudController {
       const filePath = `${uploadPath}/${fileName}`
 
       let thumbnailFilePath = ''
-      let mediaType = ''
       if (fileType === 'image') {
         // set width and height
         const metadata = await sharp(`${Application.publicPath(uploadPath)}/${fileName}`).metadata()
@@ -131,20 +146,6 @@ export default class MediasController extends CrudController {
               cloudinaryConfig.thumbnailPrefixName
             }${fileName}`
           )
-      }
-
-      switch (fileType) {
-        case 'image':
-          mediaType = 'image'
-          break
-
-        case 'video':
-          mediaType = 'video'
-          break
-
-        default:
-          mediaType = 'document'
-          break
       }
 
       const model = this.model

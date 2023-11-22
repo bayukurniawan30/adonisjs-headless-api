@@ -46,9 +46,21 @@ class MediasController extends CrudController_1.default {
         const fileName = `${uniqueTime}.${payload.file.subtype}`;
         let refId = null;
         let url;
+        let mediaType = '';
         let thumbnailUrl = '';
         let width = 0;
         let height = 0;
+        switch (fileType) {
+            case 'image':
+                mediaType = 'image';
+                break;
+            case 'video':
+                mediaType = 'video';
+                break;
+            default:
+                mediaType = 'document';
+                break;
+        }
         if (Env_1.default.get('STORAGE_WRAPPER') === 'cloudinary') {
             let resourceType = 'image';
             if (fileType !== 'video' && fileType !== 'image') {
@@ -79,7 +91,7 @@ class MediasController extends CrudController_1.default {
             const result = await model.create({
                 url,
                 thumbnailUrl,
-                type: fileType,
+                type: mediaType,
                 size: fileSize,
                 width,
                 height,
@@ -94,7 +106,6 @@ class MediasController extends CrudController_1.default {
             });
             const filePath = `${app_1.uploadPath}/${fileName}`;
             let thumbnailFilePath = '';
-            let mediaType = '';
             if (fileType === 'image') {
                 const metadata = await (0, sharp_1.default)(`${Application_1.default.publicPath(app_1.uploadPath)}/${fileName}`).metadata();
                 width = metadata.width ?? 0;
@@ -103,17 +114,6 @@ class MediasController extends CrudController_1.default {
                 await (0, sharp_1.default)(`${Application_1.default.publicPath(app_1.uploadPath)}/${fileName}`)
                     .resize({ width: 250, height: 250, fit: 'cover' })
                     .toFile(`${Application_1.default.publicPath(app_1.uploadPath)}/${cloudinary_1.default.thumbnailPrefixName}${fileName}`);
-            }
-            switch (fileType) {
-                case 'image':
-                    mediaType = 'image';
-                    break;
-                case 'video':
-                    mediaType = 'video';
-                    break;
-                default:
-                    mediaType = 'document';
-                    break;
             }
             const model = this.model;
             const result = await model.create({
