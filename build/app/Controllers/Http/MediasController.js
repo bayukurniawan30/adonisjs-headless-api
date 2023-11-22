@@ -12,13 +12,14 @@ const Application_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core
 const app_1 = global[Symbol.for('ioc.use')]("Config/app");
 const cloudinary_1 = __importDefault(global[Symbol.for('ioc.use')]("Config/cloudinary"));
 const sharp_1 = __importDefault(require("sharp"));
+const MediaPolicy_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Policies/MediaPolicy"));
 class MediasController extends CrudController_1.default {
     constructor() {
         super(...arguments);
         this.model = Media_1.default;
-        this.policy = 'MediaPolicy';
+        this.policy = new MediaPolicy_1.default();
     }
-    async store({ request, response }) {
+    async store({ auth, request, response }) {
         const validatedSchema = Validator_1.schema.create({
             file: Validator_1.schema.file({
                 size: '5mb',
@@ -125,6 +126,27 @@ class MediasController extends CrudController_1.default {
                 height,
             });
             return response.status(201).json(result);
+        }
+    }
+    async destroy({ request, response, bouncer }) {
+        const model = this.model;
+        const data = await model.findOrFail(request.param('id'));
+        if (this.policy) {
+            await bouncer.with('MediaPolicy').authorize('delete', data);
+        }
+        if (Env_1.default.get('STORAGE_WRAPPER') === 'cloudinary') {
+            const destroy = await Cloudinary_1.default.destroy(data.refId);
+            if (destroy.result === 'ok') {
+                await data.delete();
+                return response.status(204);
+            }
+            else {
+                return response.status(500);
+            }
+        }
+        else {
+            await data.delete();
+            return response.status(204);
         }
     }
 }

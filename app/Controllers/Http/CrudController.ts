@@ -94,24 +94,41 @@ export default abstract class CrudController {
     return response.status(200).json(result)
   }
 
-  public async store({ request, response, bouncer }: HttpContextContract) {
+  public async store({ auth, request, response, bouncer }: HttpContextContract) {
     if (this.policy) {
       await bouncer.with(this.policy).authorize('create')
     }
 
     const model = this.model
-    const result = await model.create(request.all())
+    let data = request.all()
+    if (model.$hasColumn('user_id')) {
+      data = {
+        ...request.all(),
+        userId: auth.user ? auth.user.id : null,
+      }
+    }
+
+    const result = await model.create(data)
     return response.status(201).json(result)
   }
 
-  public async update({ request, response, bouncer }: HttpContextContract) {
+  public async update({ auth, request, response, bouncer }: HttpContextContract) {
     if (this.policy) {
       await bouncer.with(this.policy).authorize('update')
     }
 
     const model = this.model
     const data = await model.findOrFail(request.param('id'))
-    data.merge(request.all())
+
+    let updatedData = request.all()
+    if (model.$hasColumn('user_id')) {
+      updatedData = {
+        ...request.all(),
+        userId: auth.user ? auth.user.id : null,
+      }
+    }
+
+    data.merge(updatedData)
     const result = await data.save()
     return response.status(200).json(result)
   }

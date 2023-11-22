@@ -10,12 +10,13 @@ import Application from '@ioc:Adonis/Core/Application'
 import { uploadPath } from 'Config/app'
 import cloudinaryConfig from 'Config/cloudinary'
 import sharp from 'sharp'
+import MediaPolicy from 'App/Policies/MediaPolicy'
 
 export default class MediasController extends CrudController {
   protected model = Media
-  protected policy: string = 'MediaPolicy'
+  protected policy: MediaPolicy = new MediaPolicy()
 
-  public async store({ request, response }: HttpContextContract) {
+  public async store({ auth, request, response }: HttpContextContract) {
     // validate uploaded file
     // check file size
     // check file extension
@@ -158,6 +159,28 @@ export default class MediasController extends CrudController {
         height,
       })
       return response.status(201).json(result)
+    }
+  }
+
+  public async destroy({ request, response, bouncer }: HttpContextContract) {
+    const model = this.model
+    const data = await model.findOrFail(request.param('id'))
+
+    if (this.policy) {
+      await bouncer.with('MediaPolicy').authorize('delete', data)
+    }
+
+    if (Env.get('STORAGE_WRAPPER') === 'cloudinary') {
+      const destroy = await cloudinary.destroy(data.refId)
+      if (destroy.result === 'ok') {
+        await data.delete()
+        return response.status(204)
+      } else {
+        return response.status(500)
+      }
+    } else {
+      await data.delete()
+      return response.status(204)
     }
   }
 }
