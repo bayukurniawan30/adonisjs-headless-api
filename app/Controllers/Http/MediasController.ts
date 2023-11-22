@@ -22,7 +22,21 @@ export default class MediasController extends CrudController {
     const validatedSchema = schema.create({
       file: schema.file({
         size: '5mb',
-        extnames: ['jpg', 'gif', 'png', 'jpeg', 'webp', 'mp4', 'pdf'],
+        extnames: [
+          'jpg',
+          'gif',
+          'png',
+          'jpeg',
+          'webp',
+          'mp4',
+          'pdf',
+          'doc',
+          'docx',
+          'xls',
+          'xlsx',
+          'csv',
+          'txt',
+        ],
       }),
     })
     const payload = await request.validate({ schema: validatedSchema })
@@ -38,7 +52,10 @@ export default class MediasController extends CrudController {
     // then create a new data in database
     let refId: string | null = null
     let url
+    // below is a variable for image media
     let thumbnailUrl: string = ''
+    let width: number = 0
+    let height: number = 0
 
     if (Env.get('STORAGE_WRAPPER') === 'cloudinary') {
       // this is specific for cloudinary
@@ -59,6 +76,10 @@ export default class MediasController extends CrudController {
       url = upload.secure_url
 
       if (fileType === 'image') {
+        // set width and height
+        width = upload.width
+        height = upload.height
+
         // create thumbnail, use the transformation feature in cloudinary
         const thumbnailUpload = await cloudinary.upload(
           payload.file,
@@ -81,6 +102,8 @@ export default class MediasController extends CrudController {
         thumbnailUrl,
         type: fileType,
         size: fileSize,
+        width,
+        height,
         refId,
       })
       return response.status(201).json(result)
@@ -92,7 +115,13 @@ export default class MediasController extends CrudController {
       const filePath = `${uploadPath}/${fileName}`
 
       let thumbnailFilePath = ''
+      let mediaType = ''
       if (fileType === 'image') {
+        // set width and height
+        const metadata = await sharp(`${Application.publicPath(uploadPath)}/${fileName}`).metadata()
+        width = metadata.width ?? 0
+        height = metadata.height ?? 0
+
         thumbnailFilePath = `${uploadPath}/${cloudinaryConfig.thumbnailPrefixName}${fileName}`
         // create thumbnail, use sharp library
         await sharp(`${Application.publicPath(uploadPath)}/${fileName}`)
@@ -104,12 +133,28 @@ export default class MediasController extends CrudController {
           )
       }
 
+      switch (fileType) {
+        case 'image':
+          mediaType = 'image'
+          break
+
+        case 'video':
+          mediaType = 'video'
+          break
+
+        default:
+          mediaType = 'document'
+          break
+      }
+
       const model = this.model
       const result = await model.create({
         url: filePath,
         thumbnailUrl: thumbnailFilePath,
-        type: fileType,
+        type: mediaType,
         size: fileSize,
+        width,
+        height,
       })
       return response.status(201).json(result)
     }

@@ -20,7 +20,8 @@ const Profile_1 = __importDefault(require("./Profile"));
 const Media_1 = __importDefault(require("./Media"));
 const Collection_1 = __importDefault(require("./Collection"));
 const Singleton_1 = __importDefault(require("./Singleton"));
-class User extends Orm_1.BaseModel {
+const AppBaseModel_1 = __importDefault(require("./AppBaseModel"));
+class User extends AppBaseModel_1.default {
     static async createUUID(user) {
         user.id = (0, uuid_1.v4)();
     }

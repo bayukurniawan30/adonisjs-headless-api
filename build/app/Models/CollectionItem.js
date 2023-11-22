@@ -16,7 +16,8 @@ const luxon_1 = require("luxon");
 const Orm_1 = global[Symbol.for('ioc.use')]("Adonis/Lucid/Orm");
 const uuid_1 = require("uuid");
 const Collection_1 = __importDefault(require("./Collection"));
-class CollectionItem extends Orm_1.BaseModel {
+const AppBaseModel_1 = __importDefault(require("./AppBaseModel"));
+class CollectionItem extends AppBaseModel_1.default {
     static async createUUID(collectionItem) {
         collectionItem.id = (0, uuid_1.v4)();
     }

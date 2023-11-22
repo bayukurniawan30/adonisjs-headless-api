@@ -17,16 +17,25 @@ const Orm_1 = global[Symbol.for('ioc.use')]("Adonis/Lucid/Orm");
 const uuid_1 = require("uuid");
 const User_1 = __importDefault(require("./User"));
 const app_1 = global[Symbol.for('ioc.use')]("Config/app");
-class Media extends Orm_1.BaseModel {
+const AppBaseModel_1 = __importDefault(require("./AppBaseModel"));
+class Media extends AppBaseModel_1.default {
     static async createUUID(media) {
         media.id = (0, uuid_1.v4)();
     }
-    get public_url() {
+    get publicUrl() {
         if (!this.url.includes('http')) {
             return `${app_1.appUrl}/${this.url}`;
         }
         else {
             return this.url;
+        }
+    }
+    get publicThumbnailUrl() {
+        if (!this.url.includes('http')) {
+            return `${app_1.appUrl}/${this.thumbnailUrl}`;
+        }
+        else {
+            return this.thumbnailUrl;
         }
     }
 }
@@ -51,11 +60,23 @@ __decorate([
 __decorate([
     (0, Orm_1.column)(),
     __metadata("design:type", String)
+], Media.prototype, "thumbnailUrl", void 0);
+__decorate([
+    (0, Orm_1.column)(),
+    __metadata("design:type", String)
 ], Media.prototype, "type", void 0);
 __decorate([
     (0, Orm_1.column)(),
     __metadata("design:type", Number)
 ], Media.prototype, "size", void 0);
+__decorate([
+    (0, Orm_1.column)(),
+    __metadata("design:type", Number)
+], Media.prototype, "width", void 0);
+__decorate([
+    (0, Orm_1.column)(),
+    __metadata("design:type", Number)
+], Media.prototype, "height", void 0);
 __decorate([
     (0, Orm_1.column)(),
     __metadata("design:type", String)
@@ -72,7 +93,12 @@ __decorate([
     (0, Orm_1.computed)(),
     __metadata("design:type", Object),
     __metadata("design:paramtypes", [])
-], Media.prototype, "public_url", null);
+], Media.prototype, "publicUrl", null);
+__decorate([
+    (0, Orm_1.computed)(),
+    __metadata("design:type", Object),
+    __metadata("design:paramtypes", [])
+], Media.prototype, "publicThumbnailUrl", null);
 __decorate([
     (0, Orm_1.beforeCreate)(),
     __metadata("design:type", Function),

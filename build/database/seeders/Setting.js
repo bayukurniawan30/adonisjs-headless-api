@@ -11,10 +11,34 @@ class default_1 extends Seeder_1.default {
             {
                 key: 'date-format',
                 value: 'MMM D, YY',
+                selectable: JSON.stringify([
+                    {
+                        key: 'MMM D, YY',
+                        value: 'MMM D, YY',
+                    },
+                    {
+                        key: 'DD/MM/YYYY',
+                        value: 'DD/MM/YYYY',
+                    },
+                    {
+                        key: 'dddd, MMMM D, YYYY',
+                        value: 'dddd, MMMM D, YYYY',
+                    },
+                ]),
             },
             {
                 key: 'time-format',
                 value: 'h:mm A',
+                selectable: JSON.stringify([
+                    {
+                        key: 'h:mm A',
+                        value: 'h:mm A',
+                    },
+                    {
+                        key: 'HH:mm',
+                        value: 'HH:mm',
+                    },
+                ]),
             },
         ]);
     }

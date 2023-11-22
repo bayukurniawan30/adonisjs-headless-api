@@ -11,9 +11,7 @@ class MediaPolicy extends Bouncer_1.BasePolicy {
     async view(user, media) {
         return media.userId === user.id;
     }
-    async create(user, media) {
-        return media.userId === user.id;
-    }
+    async create(user, media) { }
     async update(user, media) {
         return media.userId === user.id;
     }

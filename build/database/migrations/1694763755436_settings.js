@@ -14,6 +14,7 @@ class default_1 extends Schema_1.default {
             table.uuid('id').primary();
             table.string('key').notNullable().unique();
             table.text('value', 'mediumtext').notNullable();
+            table.jsonb('selectable').nullable();
             table.timestamp('created_at', { useTz: true });
             table.timestamp('updated_at', { useTz: true });
         });

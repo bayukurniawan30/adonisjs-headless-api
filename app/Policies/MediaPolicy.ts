@@ -12,9 +12,7 @@ export default class MediaPolicy extends BasePolicy {
   public async view(user: User, media: Media) {
     return media.userId === user.id
   }
-  public async create(user: User, media: Media) {
-    return media.userId === user.id
-  }
+  public async create(user: User, media: Media) {}
   public async update(user: User, media: Media) {
     return media.userId === user.id
   }

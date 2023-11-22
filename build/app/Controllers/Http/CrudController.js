@@ -38,7 +38,10 @@ class CrudController {
         const result = await processedModel.paginate(pagination.page, pagination.limit);
         return response.status(200).json(result);
     }
-    async show({ request, response }) {
+    async show({ request, response, bouncer }) {
+        if (this.policy) {
+            await bouncer.with(this.policy).authorize('view');
+        }
         const model = this.model;
         const data = model.query().where('id', request.param('id'));
         if (this.relationships && this.relationships.length > 0) {
@@ -46,22 +49,31 @@ class CrudController {
                 return data.preload(relationship);
             });
         }
-        const result = await data;
+        const result = await data.firstOrFail();
         return response.status(200).json(result);
     }
-    async store({ request, response }) {
+    async store({ request, response, bouncer }) {
+        if (this.policy) {
+            await bouncer.with(this.policy).authorize('create');
+        }
         const model = this.model;
         const result = await model.create(request.all());
         return response.status(201).json(result);
     }
-    async update({ request, response }) {
+    async update({ request, response, bouncer }) {
+        if (this.policy) {
+            await bouncer.with(this.policy).authorize('update');
+        }
         const model = this.model;
         const data = await model.findOrFail(request.param('id'));
         data.merge(request.all());
         const result = await data.save();
         return response.status(200).json(result);
     }
-    async destroy({ request, response }) {
+    async destroy({ request, response, bouncer }) {
+        if (this.policy) {
+            await bouncer.with(this.policy).authorize('delete');
+        }
         const model = this.model;
         const data = await model.findOrFail(request.param('id'));
         await data.delete();

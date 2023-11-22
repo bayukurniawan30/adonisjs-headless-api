@@ -32,6 +32,12 @@ export default class Media extends AppBaseModel {
   public size: number
 
   @column()
+  public width: number
+
+  @column()
+  public height: number
+
+  @column()
   public refId: string
 
   @column.dateTime({ autoCreate: true })
@@ -51,6 +57,15 @@ export default class Media extends AppBaseModel {
       return `${appUrl}/${this.url}`
     } else {
       return this.url
+    }
+  }
+
+  @computed()
+  public get publicThumbnailUrl() {
+    if (!this.url.includes('http')) {
+      return `${appUrl}/${this.thumbnailUrl}`
+    } else {
+      return this.thumbnailUrl
     }
   }
 }

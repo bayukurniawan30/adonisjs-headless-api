@@ -16,9 +16,13 @@ const luxon_1 = require("luxon");
 const Orm_1 = global[Symbol.for('ioc.use')]("Adonis/Lucid/Orm");
 const uuid_1 = require("uuid");
 const User_1 = __importDefault(require("./User"));
-class Profile extends Orm_1.BaseModel {
+const AppBaseModel_1 = __importDefault(require("./AppBaseModel"));
+class Profile extends AppBaseModel_1.default {
     static async createUUID(profile) {
         profile.id = (0, uuid_1.v4)();
+    }
+    get fullName() {
+        return this.firstName + ' ' + this.lastName;
     }
 }
 Profile.selfAssignPrimaryKey = true;
@@ -50,6 +54,11 @@ __decorate([
     Orm_1.column.dateTime({ autoCreate: true, autoUpdate: true }),
     __metadata("design:type", luxon_1.DateTime)
 ], Profile.prototype, "updatedAt", void 0);
+__decorate([
+    (0, Orm_1.computed)(),
+    __metadata("design:type", Object),
+    __metadata("design:paramtypes", [])
+], Profile.prototype, "fullName", null);
 __decorate([
     (0, Orm_1.beforeCreate)(),
     __metadata("design:type", Function),

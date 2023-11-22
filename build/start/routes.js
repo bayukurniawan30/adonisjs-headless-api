@@ -12,6 +12,7 @@ Route_1.default.group(() => {
     Route_1.default.group(() => {
         Route_1.default.get('/me', 'AuthController.me');
         Route_1.default.get('/logout', 'AuthController.logout');
+        Route_1.default.resource('users', 'UsersController').apiOnly();
         Route_1.default.resource('medias', 'MediasController').except(['update']).apiOnly();
         Route_1.default.resource('collections', 'CollectionsController').apiOnly();
         Route_1.default.resource('available-fields', 'AvailableFieldsController');

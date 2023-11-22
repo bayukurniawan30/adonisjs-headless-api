@@ -7,6 +7,7 @@ export default class extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.uuid('id').primary()
       table.string('name').notNullable().unique()
+      table.string('slug').notNullable().unique()
       table.string('additional_text').nullable().defaultTo(null)
       table.jsonb('metadata').nullable()
 

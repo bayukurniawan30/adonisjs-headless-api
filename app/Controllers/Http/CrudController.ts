@@ -76,7 +76,11 @@ export default abstract class CrudController {
     return response.status(200).json(result)
   }
 
-  public async show({ request, response }: HttpContextContract) {
+  public async show({ request, response, bouncer }: HttpContextContract) {
+    if (this.policy) {
+      await bouncer.with(this.policy).authorize('view')
+    }
+
     const model = this.model
     const data = model.query().where('id', request.param('id'))
 
@@ -90,13 +94,21 @@ export default abstract class CrudController {
     return response.status(200).json(result)
   }
 
-  public async store({ request, response }: HttpContextContract) {
+  public async store({ request, response, bouncer }: HttpContextContract) {
+    if (this.policy) {
+      await bouncer.with(this.policy).authorize('create')
+    }
+
     const model = this.model
     const result = await model.create(request.all())
     return response.status(201).json(result)
   }
 
-  public async update({ request, response }: HttpContextContract) {
+  public async update({ request, response, bouncer }: HttpContextContract) {
+    if (this.policy) {
+      await bouncer.with(this.policy).authorize('update')
+    }
+
     const model = this.model
     const data = await model.findOrFail(request.param('id'))
     data.merge(request.all())
@@ -104,7 +116,11 @@ export default abstract class CrudController {
     return response.status(200).json(result)
   }
 
-  public async destroy({ request, response }: HttpContextContract) {
+  public async destroy({ request, response, bouncer }: HttpContextContract) {
+    if (this.policy) {
+      await bouncer.with(this.policy).authorize('delete')
+    }
+
     const model = this.model
     const data = await model.findOrFail(request.param('id'))
     await data.delete()

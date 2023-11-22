@@ -13,6 +13,9 @@ export default class AvailableField extends AppBaseModel {
   public name: string
 
   @column()
+  public slug: string
+
+  @column()
   public additionalText: string
 
   @column()

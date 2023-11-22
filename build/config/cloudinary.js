@@ -17,6 +17,7 @@ const cloudinaryConfig = {
         height: 150,
         crop: 'fit',
     },
+    thumbnailPrefixName: 'thumb_',
 };
 exports.default = cloudinaryConfig;
 //# sourceMappingURL=cloudinary.js.map

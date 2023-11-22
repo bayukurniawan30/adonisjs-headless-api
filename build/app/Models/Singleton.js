@@ -18,7 +18,8 @@ const SingletonItem_1 = __importDefault(require("./SingletonItem"));
 const User_1 = __importDefault(require("./User"));
 const LucidSlugify_1 = global[Symbol.for('ioc.use')]("Adonis/Addons/LucidSlugify");
 const uuid_1 = require("uuid");
-class Singleton extends Orm_1.BaseModel {
+const AppBaseModel_1 = __importDefault(require("./AppBaseModel"));
+class Singleton extends AppBaseModel_1.default {
     static async createUUID(singleton) {
         singleton.id = (0, uuid_1.v4)();
     }

@@ -15,6 +15,9 @@ class default_1 extends Schema_1.default {
             table.string('type').notNullable();
             table.integer('size').notNullable();
             table.string('url').notNullable();
+            table.string('thumbnail_url').nullable();
+            table.integer('width').nullable();
+            table.integer('height').nullable();
             table.string('ref_id').nullable();
             table.uuid('user_id').references('users.id').onDelete('CASCADE');
             table.timestamp('created_at', { useTz: true });
