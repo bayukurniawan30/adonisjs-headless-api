@@ -10,34 +10,37 @@ import Application from '@ioc:Adonis/Core/Application'
 import { uploadPath } from 'Config/app'
 import cloudinaryConfig from 'Config/cloudinary'
 import sharp from 'sharp'
-import MediaPolicy from 'App/Policies/MediaPolicy'
+import Drive from '@ioc:Adonis/Core/Drive'
 
 export default class MediasController extends CrudController {
   protected model = Media
-  protected policy: MediaPolicy = new MediaPolicy()
+  protected relationships = ['user']
+  protected policy = 'MediaPolicy'
 
   public async store({ auth, request, response }: HttpContextContract) {
     // validate uploaded file
     // check file size
     // check file extension
+    const allowedMimeTypes = [
+      'jpg',
+      'gif',
+      'png',
+      'jpeg',
+      'webp',
+      'mp4',
+      'pdf',
+      'doc',
+      'docx',
+      'xls',
+      'xlsx',
+      'csv',
+      'txt',
+    ]
+
     const validatedSchema = schema.create({
       file: schema.file({
         size: '5mb',
-        extnames: [
-          'jpg',
-          'gif',
-          'png',
-          'jpeg',
-          'webp',
-          'mp4',
-          'pdf',
-          'doc',
-          'docx',
-          'xls',
-          'xlsx',
-          'csv',
-          'txt',
-        ],
+        extnames: allowedMimeTypes,
       }),
     })
     const payload = await request.validate({ schema: validatedSchema })
@@ -62,13 +65,9 @@ export default class MediasController extends CrudController {
     // other than image and video, it will be treated as document
     switch (fileType) {
       case 'image':
-        mediaType = 'image'
-        break
-
       case 'video':
-        mediaType = 'video'
+        mediaType = fileType
         break
-
       default:
         mediaType = 'document'
         break
@@ -79,18 +78,10 @@ export default class MediasController extends CrudController {
       // if you cant open the public url of pdf file, please refer to https://support.cloudinary.com/hc/en-us/articles/360016480179-PDF-or-ZIP-files-appearing-in-Media-Library-but-download-URLs-return-an-error-
       // need to check Allow delivery of PDF and ZIP files in the settings page
       // PDF file is treated as an image in cloudinary
-      let resourceType: 'video' | 'image' | 'raw' | 'auto' | undefined = 'image'
-      if (fileType !== 'video' && fileType !== 'image') {
-        resourceType = 'auto'
-      } else {
-        resourceType = fileType
-      }
-
-      const upload = await cloudinary.upload(payload.file, uniqueTime, {
-        resource_type: resourceType,
-      })
-      refId = upload.public_id
-      url = upload.secure_url
+      const resourceType = fileType !== 'video' && fileType !== 'image' ? 'auto' : fileType
+      const upload = await this.uploadToCloudinary(payload, uniqueTime, resourceType)
+      refId = upload.refId
+      url = upload.url
 
       if (fileType === 'image') {
         // set width and height
@@ -114,7 +105,7 @@ export default class MediasController extends CrudController {
       }
 
       const model = this.model
-      const result = await model.create({
+      let storePayload: Partial<Media> = {
         url,
         thumbnailUrl,
         type: mediaType,
@@ -122,7 +113,14 @@ export default class MediasController extends CrudController {
         width,
         height,
         refId,
-      })
+      }
+      if (model.$hasColumn('userId')) {
+        storePayload = {
+          ...storePayload,
+          userId: auth.user ? auth.user.id : '',
+        }
+      }
+      const result = await model.create(storePayload)
       return response.status(201).json(result)
     } else {
       await payload.file.move(Application.publicPath(uploadPath), {
@@ -150,14 +148,21 @@ export default class MediasController extends CrudController {
       }
 
       const model = this.model
-      const result = await model.create({
+      let storePayload: Partial<Media> = {
         url: filePath,
         thumbnailUrl: thumbnailFilePath,
         type: mediaType,
         size: fileSize,
         width,
         height,
-      })
+      }
+      if (model.$hasColumn('userId')) {
+        storePayload = {
+          ...storePayload,
+          userId: auth.user ? auth.user.id : '',
+        }
+      }
+      const result = await model.create(storePayload)
       return response.status(201).json(result)
     }
   }
@@ -171,6 +176,7 @@ export default class MediasController extends CrudController {
     }
 
     if (Env.get('STORAGE_WRAPPER') === 'cloudinary') {
+      // destroy the media from cloudinary
       const destroy = await cloudinary.destroy(data.refId)
       if (destroy.result === 'ok') {
         await data.delete()
@@ -179,8 +185,30 @@ export default class MediasController extends CrudController {
         return response.status(500)
       }
     } else {
+      // destroy the media from local
+      await Drive.delete(data.url)
+      if (data.thumbnailUrl) {
+        await Drive.delete(data.thumbnailUrl)
+      }
+
       await data.delete()
       return response.status(204)
+    }
+  }
+
+  private async uploadToCloudinary(
+    payload,
+    uniqueTime: string,
+    resourceType: 'video' | 'image' | 'raw' | 'auto' | undefined
+  ) {
+    const upload = await cloudinary.upload(payload.file, uniqueTime, {
+      resource_type: resourceType,
+    })
+    return {
+      refId: upload.public_id,
+      url: upload.secure_url,
+      width: upload.width,
+      height: upload.height,
     }
   }
 }

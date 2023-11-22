@@ -12,32 +12,34 @@ const Application_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core
 const app_1 = global[Symbol.for('ioc.use')]("Config/app");
 const cloudinary_1 = __importDefault(global[Symbol.for('ioc.use')]("Config/cloudinary"));
 const sharp_1 = __importDefault(require("sharp"));
-const MediaPolicy_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Policies/MediaPolicy"));
+const Drive_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Drive"));
 class MediasController extends CrudController_1.default {
     constructor() {
         super(...arguments);
         this.model = Media_1.default;
-        this.policy = new MediaPolicy_1.default();
+        this.relationships = ['user'];
+        this.policy = 'MediaPolicy';
     }
     async store({ auth, request, response }) {
+        const allowedMimeTypes = [
+            'jpg',
+            'gif',
+            'png',
+            'jpeg',
+            'webp',
+            'mp4',
+            'pdf',
+            'doc',
+            'docx',
+            'xls',
+            'xlsx',
+            'csv',
+            'txt',
+        ];
         const validatedSchema = Validator_1.schema.create({
             file: Validator_1.schema.file({
                 size: '5mb',
-                extnames: [
-                    'jpg',
-                    'gif',
-                    'png',
-                    'jpeg',
-                    'webp',
-                    'mp4',
-                    'pdf',
-                    'doc',
-                    'docx',
-                    'xls',
-                    'xlsx',
-                    'csv',
-                    'txt',
-                ],
+                extnames: allowedMimeTypes,
             }),
         });
         const payload = await request.validate({ schema: validatedSchema });
@@ -53,28 +55,18 @@ class MediasController extends CrudController_1.default {
         let height = 0;
         switch (fileType) {
             case 'image':
-                mediaType = 'image';
-                break;
             case 'video':
-                mediaType = 'video';
+                mediaType = fileType;
                 break;
             default:
                 mediaType = 'document';
                 break;
         }
         if (Env_1.default.get('STORAGE_WRAPPER') === 'cloudinary') {
-            let resourceType = 'image';
-            if (fileType !== 'video' && fileType !== 'image') {
-                resourceType = 'auto';
-            }
-            else {
-                resourceType = fileType;
-            }
-            const upload = await Cloudinary_1.default.upload(payload.file, uniqueTime, {
-                resource_type: resourceType,
-            });
-            refId = upload.public_id;
-            url = upload.secure_url;
+            const resourceType = fileType !== 'video' && fileType !== 'image' ? 'auto' : fileType;
+            const upload = await this.uploadToCloudinary(payload, uniqueTime, resourceType);
+            refId = upload.refId;
+            url = upload.url;
             if (fileType === 'image') {
                 width = upload.width;
                 height = upload.height;
@@ -89,7 +81,7 @@ class MediasController extends CrudController_1.default {
                 thumbnailUrl = thumbnailUpload.secure_url;
             }
             const model = this.model;
-            const result = await model.create({
+            let storePayload = {
                 url,
                 thumbnailUrl,
                 type: mediaType,
@@ -97,7 +89,14 @@ class MediasController extends CrudController_1.default {
                 width,
                 height,
                 refId,
-            });
+            };
+            if (model.$hasColumn('userId')) {
+                storePayload = {
+                    ...storePayload,
+                    userId: auth.user ? auth.user.id : '',
+                };
+            }
+            const result = await model.create(storePayload);
             return response.status(201).json(result);
         }
         else {
@@ -117,14 +116,21 @@ class MediasController extends CrudController_1.default {
                     .toFile(`${Application_1.default.publicPath(app_1.uploadPath)}/${cloudinary_1.default.thumbnailPrefixName}${fileName}`);
             }
             const model = this.model;
-            const result = await model.create({
+            let storePayload = {
                 url: filePath,
                 thumbnailUrl: thumbnailFilePath,
                 type: mediaType,
                 size: fileSize,
                 width,
                 height,
-            });
+            };
+            if (model.$hasColumn('userId')) {
+                storePayload = {
+                    ...storePayload,
+                    userId: auth.user ? auth.user.id : '',
+                };
+            }
+            const result = await model.create(storePayload);
             return response.status(201).json(result);
         }
     }
@@ -145,9 +151,24 @@ class MediasController extends CrudController_1.default {
             }
         }
         else {
+            await Drive_1.default.delete(data.url);
+            if (data.thumbnailUrl) {
+                await Drive_1.default.delete(data.thumbnailUrl);
+            }
             await data.delete();
             return response.status(204);
         }
+    }
+    async uploadToCloudinary(payload, uniqueTime, resourceType) {
+        const upload = await Cloudinary_1.default.upload(payload.file, uniqueTime, {
+            resource_type: resourceType,
+        });
+        return {
+            refId: upload.public_id,
+            url: upload.secure_url,
+            width: upload.width,
+            height: upload.height,
+        };
     }
 }
 exports.default = MediasController;
