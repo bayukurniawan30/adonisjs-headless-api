@@ -3,15 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Bouncer_1 = global[Symbol.for('ioc.use')]("Adonis/Addons/Bouncer");
 class MediaPolicy extends Bouncer_1.BasePolicy {
     async before(user) {
-        if (user && user.isAdmin) {
+        if (user) {
             return true;
         }
     }
     async viewList() { }
-    async view(user, media) {
-        return media.userId === user.id;
-    }
-    async create(user, media) { }
+    async view() { }
+    async create() { }
     async update(user, media) {
         return media.userId === user.id;
     }

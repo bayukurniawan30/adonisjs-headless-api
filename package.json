@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "node ace serve --watch",
     "build": "node ace build --production",
+    "build_ignore_ts": "node ace build --production --ignore-ts-errors",
     "start": "node server.js",
     "test": "node ace test",
     "lint": "eslint . --ext=.ts",

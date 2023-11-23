@@ -4,15 +4,13 @@ import User from 'App/Models/User'
 
 export default class MediaPolicy extends BasePolicy {
   public async before(user: User | null) {
-    if (user && user.isAdmin) {
+    if (user) {
       return true
     }
   }
   public async viewList() {}
-  public async view(user: User, media: Media) {
-    return media.userId === user.id
-  }
-  public async create(user: User, media: Media) {}
+  public async view() {}
+  public async create() {}
   public async update(user: User, media: Media) {
     return media.userId === user.id
   }
