@@ -68,11 +68,11 @@ class CrudController {
         return response.status(201).json(result);
     }
     async update({ auth, request, response, bouncer }) {
-        if (this.policy) {
-            await bouncer.with(this.policy).authorize('update');
-        }
         const model = this.model;
         const data = await model.findOrFail(request.param('id'));
+        if (this.policy) {
+            await bouncer.with(this.policy).authorize('update', data);
+        }
         let updatedData = request.all();
         if (model.$hasColumn('user_id')) {
             updatedData = {
@@ -85,11 +85,11 @@ class CrudController {
         return response.status(200).json(result);
     }
     async destroy({ request, response, bouncer }) {
-        if (this.policy) {
-            await bouncer.with(this.policy).authorize('delete');
-        }
         const model = this.model;
         const data = await model.findOrFail(request.param('id'));
+        if (this.policy) {
+            await bouncer.with(this.policy).authorize('delete', data);
+        }
         await data.delete();
         return response.status(204);
     }
