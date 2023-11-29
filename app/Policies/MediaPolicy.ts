@@ -15,9 +15,9 @@ export default class MediaPolicy extends BasePolicy {
     }
   }
   public async update(user: User, media: Media) {
-    return media.userId === user.id
+    return media.userId === user.id || user.isAdmin
   }
   public async delete(user: User, media: Media) {
-    return media.userId === user.id
+    return media.userId === user.id || user.isAdmin
   }
 }
