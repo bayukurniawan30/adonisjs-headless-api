@@ -14,10 +14,10 @@ class MediaPolicy extends Bouncer_1.BasePolicy {
         }
     }
     async update(user, media) {
-        return media.userId === user.id;
+        return media.userId === user.id || user.isAdmin;
     }
     async delete(user, media) {
-        return media.userId === user.id;
+        return media.userId === user.id || user.isAdmin;
     }
 }
 exports.default = MediaPolicy;
