@@ -1,5 +1,3 @@
-// import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-
 import Collection from 'App/Models/Collection'
 import CrudController from './CrudController'
 
