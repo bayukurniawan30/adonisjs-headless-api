@@ -10,6 +10,7 @@ class CollectionsController extends CrudController_1.default {
         super(...arguments);
         this.model = Collection_1.default;
         this.relationships = ['collectionItems'];
+        this.policy = 'CollectionPolicy';
     }
 }
 exports.default = CollectionsController;
