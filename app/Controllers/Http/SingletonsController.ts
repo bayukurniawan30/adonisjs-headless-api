@@ -4,6 +4,6 @@ import Singleton from 'App/Models/Singleton'
 
 export default class SingletonsController {
   protected model = Singleton
-  protected relationships = ['singletonItem']
+  protected relationships = ['user', 'singletonItem']
   protected policy = 'SingletonPolicy'
 }

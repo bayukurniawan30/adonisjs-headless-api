@@ -9,7 +9,7 @@ class CollectionsController extends CrudController_1.default {
     constructor() {
         super(...arguments);
         this.model = Collection_1.default;
-        this.relationships = ['collectionItems'];
+        this.relationships = ['user', 'collectionItems'];
         this.policy = 'CollectionPolicy';
     }
 }

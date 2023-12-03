@@ -7,7 +7,7 @@ const Singleton_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Si
 class SingletonsController {
     constructor() {
         this.model = Singleton_1.default;
-        this.relationships = ['singletonItem'];
+        this.relationships = ['user', 'singletonItem'];
         this.policy = 'SingletonPolicy';
     }
 }
