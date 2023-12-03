@@ -37,6 +37,7 @@ Route.group(() => {
     Route.resource('users', 'UsersController').apiOnly()
     Route.resource('medias', 'MediasController').except(['update']).apiOnly()
     Route.resource('collections', 'CollectionsController').apiOnly()
+    Route.resource('singletons', 'SingletonsController').apiOnly()
     Route.resource('available-fields', 'AvailableFieldsController')
     Route.resource('settings', 'SettingsController').apiOnly().only(['index', 'show', 'update'])
   }).middleware('auth')
