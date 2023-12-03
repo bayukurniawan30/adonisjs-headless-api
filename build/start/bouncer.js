@@ -30,5 +30,7 @@ exports.policies = void 0;
 const Bouncer_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Addons/Bouncer"));
 exports.policies = Bouncer_1.default.registerPolicies({
     MediaPolicy: () => Promise.resolve().then(() => __importStar(global[Symbol.for('ioc.use')]('App/Policies/MediaPolicy'))),
+    CollectionPolicy: () => Promise.resolve().then(() => __importStar(global[Symbol.for('ioc.use')]('App/Policies/CollectionPolicy'))),
+    SingletonPolicy: () => Promise.resolve().then(() => __importStar(global[Symbol.for('ioc.use')]('App/Policies/SingletonPolicy'))),
 }).policies;
 //# sourceMappingURL=bouncer.js.map
