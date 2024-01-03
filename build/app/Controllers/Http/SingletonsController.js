@@ -20,19 +20,15 @@ class SingletonsController extends CrudController_1.default {
             fields: Validator_1.schema.string(),
         });
         const payload = await request.validate({ schema: validatedSchema });
-        console.log('🚀 ~ file: SingletonsController.ts:19 ~ SingletonsController ~ store ~ payload:', payload);
         let parseFields;
-        const fields = [];
-        if (!payload.fields && payload.fields !== '') {
+        let fields = [];
+        if (payload.fields && payload.fields !== '') {
             parseFields = JSON.parse(payload.fields);
             if (parseFields.length > 0) {
-                const fields = {};
-                parseFields.map((field, index) => {
-                    fields[index] = {
-                        id: field.id,
-                        metadata: field.metadata,
-                    };
-                });
+                fields = parseFields.map((field) => ({
+                    id: field.id,
+                    metadata: field.metadata,
+                }));
             }
         }
         console.log('🚀 ~ file: SingletonsController.ts:26 ~ SingletonsController ~ store ~ fields:', fields);

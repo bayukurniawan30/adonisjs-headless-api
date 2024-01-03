@@ -16,23 +16,18 @@ export default class SingletonsController extends CrudController {
       fields: schema.string(),
     })
     const payload = await request.validate({ schema: validatedSchema })
-    console.log(
-      '🚀 ~ file: SingletonsController.ts:19 ~ SingletonsController ~ store ~ payload:',
-      payload
-    )
 
     let parseFields
-    const fields = []
-    if (!payload.fields && payload.fields !== '') {
+    let fields = []
+
+    if (payload.fields && payload.fields !== '') {
       parseFields = JSON.parse(payload.fields)
+
       if (parseFields.length > 0) {
-        const fields = {}
-        parseFields.map((field: AvailableField, index) => {
-          fields[index] = {
-            id: field.id,
-            metadata: field.metadata,
-          }
-        })
+        fields = parseFields.map((field: AvailableField) => ({
+          id: field.id,
+          metadata: field.metadata,
+        }))
       }
     }
     console.log(
