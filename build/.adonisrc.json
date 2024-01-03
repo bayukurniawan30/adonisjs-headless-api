@@ -17,7 +17,8 @@
   "preloads": [
     "./start/routes",
     "./start/kernel",
-    "./start/bouncer"
+    "./start/bouncer",
+    "./start/validator"
   ],
   "providers": [
     "./providers/AppProvider",
@@ -52,5 +53,5 @@
   "testProviders": [
     "@japa/preset-adonis/TestsProvider"
   ],
-  "lastCompiledAt": "2023-12-03T06:24:07.611Z"
+  "lastCompiledAt": "2024-01-03T03:02:07.115Z"
 }

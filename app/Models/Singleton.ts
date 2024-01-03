@@ -32,7 +32,7 @@ export default class Singleton extends AppBaseModel {
   public fields: Object
 
   @column()
-  public status: 'publish' | 'draft'
+  public status: string
 
   @column()
   public userId: string

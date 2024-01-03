@@ -32,7 +32,7 @@ export default class Collection extends AppBaseModel {
   public fields: Object
 
   @column()
-  public status: 'publish' | 'draft'
+  public status: string
 
   @column()
   public isConnecting: boolean
