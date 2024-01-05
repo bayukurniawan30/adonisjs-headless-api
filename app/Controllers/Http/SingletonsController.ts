@@ -24,16 +24,14 @@ export default class SingletonsController extends CrudController {
       parseFields = JSON.parse(payload.fields)
 
       if (parseFields.length > 0) {
-        fields = parseFields.map((field: AvailableField) => ({
+        fields = parseFields.map((field) => ({
           id: field.id,
+          label: field.label,
+          helperText: field.helperText,
           metadata: field.metadata,
         }))
       }
     }
-    console.log(
-      '🚀 ~ file: SingletonsController.ts:26 ~ SingletonsController ~ store ~ fields:',
-      fields
-    )
 
     const model = this.model
     const result = await model.create({

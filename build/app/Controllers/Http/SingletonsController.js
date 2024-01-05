@@ -27,11 +27,12 @@ class SingletonsController extends CrudController_1.default {
             if (parseFields.length > 0) {
                 fields = parseFields.map((field) => ({
                     id: field.id,
+                    label: field.label,
+                    helperText: field.helperText,
                     metadata: field.metadata,
                 }));
             }
         }
-        console.log('🚀 ~ file: SingletonsController.ts:26 ~ SingletonsController ~ store ~ fields:', fields);
         const model = this.model;
         const result = await model.create({
             name: payload.name,
