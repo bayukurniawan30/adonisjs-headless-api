@@ -42,6 +42,56 @@ class SingletonsController extends CrudController_1.default {
         });
         return response.status(201).json(result);
     }
+    async update({ auth, request, response, bouncer }) {
+        const validatedSchema = Validator_1.schema.create({
+            name: Validator_1.schema.string(),
+            status: Validator_1.schema.string([Validator_1.rules.statusEnum()]),
+            fields: Validator_1.schema.string(),
+        });
+        const payload = await request.validate({ schema: validatedSchema });
+        let parseFields;
+        let fields = [];
+        if (payload.fields && payload.fields !== '') {
+            parseFields = JSON.parse(payload.fields);
+            if (parseFields.length > 0) {
+                fields = parseFields.map((field) => ({
+                    id: field.id,
+                    label: field.label,
+                    helperText: field.helperText,
+                    metadata: field.metadata,
+                }));
+            }
+        }
+        const model = this.model;
+        const data = await model.findOrFail(request.param('id'));
+        if (this.policy) {
+            await bouncer.with('SingletonPolicy').authorize('update', data);
+        }
+        let updatedData = request.all();
+        if (model.$hasColumn('user_id')) {
+            updatedData = {
+                ...request.all(),
+                fields: JSON.stringify(fields),
+                userId: auth.user ? auth.user.id : null,
+            };
+        }
+        data.merge(updatedData);
+        const result = await data.save();
+        return response.status(200).json(result);
+    }
+    async destroy({ request, response, bouncer }) {
+        const model = this.model;
+        const data = await model.findOrFail(request.param('id'));
+        if (this.policy) {
+            await bouncer.with('SingletonPolicy').authorize('delete', data);
+        }
+        const singletonItem = await data.related('singletonItem').query();
+        if (singletonItem.length > 0) {
+            return response.status(400);
+        }
+        await data.delete();
+        return response.status(204);
+    }
 }
 exports.default = SingletonsController;
 //# sourceMappingURL=SingletonsController.js.map
