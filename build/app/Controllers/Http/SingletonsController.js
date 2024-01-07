@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Validator_1 = global[Symbol.for('ioc.use')]("Adonis/Core/Validator");
 const Singleton_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Singleton"));
 const CrudController_1 = __importDefault(require("./CrudController"));
-const AvailableField_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/AvailableField"));
 class SingletonsController extends CrudController_1.default {
     constructor() {
         super(...arguments);
@@ -103,22 +102,7 @@ class SingletonsController extends CrudController_1.default {
         }
         query.where('id', request.param('id'));
         const result = await query.firstOrFail();
-        const modifiedField = [];
-        JSON.parse(result.fields).map((field) => {
-            const getAvailableField = AvailableField_1.default.query().where('id', field.id);
-            getAvailableField.first().then((availableField) => {
-                modifiedField.push({
-                    id: field.id,
-                    fieldType: availableField?.name,
-                    fieldSlug: availableField?.slug,
-                    label: field.label,
-                    helperText: field.helperText,
-                    metadata: field.metadata,
-                });
-            });
-        });
-        const newResult = { ...result, fields: modifiedField };
-        return response.status(200).json(newResult);
+        return response.status(200).json(result);
     }
 }
 exports.default = SingletonsController;
