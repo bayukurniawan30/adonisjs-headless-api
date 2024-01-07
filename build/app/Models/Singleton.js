@@ -51,7 +51,7 @@ __decorate([
 ], Singleton.prototype, "slug", void 0);
 __decorate([
     (0, Orm_1.column)(),
-    __metadata("design:type", Object)
+    __metadata("design:type", String)
 ], Singleton.prototype, "fields", void 0);
 __decorate([
     (0, Orm_1.column)(),

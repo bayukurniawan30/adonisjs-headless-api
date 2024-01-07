@@ -29,7 +29,7 @@ export default class Singleton extends AppBaseModel {
   public slug: string
 
   @column()
-  public fields: Object
+  public fields: string
 
   @column()
   public status: string

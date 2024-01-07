@@ -2,6 +2,16 @@ import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { rules, schema } from '@ioc:Adonis/Core/Validator'
 import Singleton from 'App/Models/Singleton'
 import CrudController from './CrudController'
+import AvailableField from 'App/Models/AvailableField'
+
+interface ModifiedField {
+  id: string
+  fieldType: string | undefined
+  fieldSlug: string | undefined
+  label: string
+  helperText: string
+  metadata: any
+}
 
 export default class SingletonsController extends CrudController {
   protected model = Singleton
@@ -118,6 +128,22 @@ export default class SingletonsController extends CrudController {
     query.where('id', request.param('id'))
 
     const result = await query.firstOrFail()
-    return response.status(200).json(result)
+    const modifiedField: ModifiedField[] = []
+    JSON.parse(result.fields).map((field) => {
+      const getAvailableField = AvailableField.query().where('id', field.id)
+      getAvailableField.first().then((availableField) => {
+        modifiedField.push({
+          id: field.id,
+          fieldType: availableField?.name,
+          fieldSlug: availableField?.slug,
+          label: field.label,
+          helperText: field.helperText,
+          metadata: field.metadata,
+        })
+      })
+    })
+    const newResult = { ...result, fields: modifiedField }
+
+    return response.status(200).json(newResult)
   }
 }
