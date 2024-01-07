@@ -105,4 +105,19 @@ export default class SingletonsController extends CrudController {
     await data.delete()
     return response.status(204)
   }
+
+  public async item({ request, response }: HttpContextContract) {
+    const model = this.model
+    const query = model.query()
+
+    if (this.relationships && this.relationships.length > 0) {
+      this.relationships.map((relationship) => {
+        return query.preload(relationship as any)
+      })
+    }
+    query.where('id', request.param('id'))
+
+    const result = await query.firstOrFail()
+    return response.status(200).json(result)
+  }
 }

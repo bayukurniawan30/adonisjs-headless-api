@@ -92,6 +92,18 @@ class SingletonsController extends CrudController_1.default {
         await data.delete();
         return response.status(204);
     }
+    async item({ request, response }) {
+        const model = this.model;
+        const query = model.query();
+        if (this.relationships && this.relationships.length > 0) {
+            this.relationships.map((relationship) => {
+                return query.preload(relationship);
+            });
+        }
+        query.where('id', request.param('id'));
+        const result = await query.firstOrFail();
+        return response.status(200).json(result);
+    }
 }
 exports.default = SingletonsController;
 //# sourceMappingURL=SingletonsController.js.map
