@@ -20,13 +20,16 @@ export default class extends BaseSeeder {
         slug: string.dashCase('Date Picker'),
         additionalText: 'Pick a date',
         metadata: {
-          dateFormat: 'yyyy-mm-dd',
+          dateFormat: 'YYYY-MM-DD',
         },
       },
       {
         name: 'Time Picker',
         slug: string.dashCase('Time Picker'),
         additionalText: 'Pick a time',
+        metadata: {
+          dateFormat: 'HH:mm',
+        },
       },
       {
         name: 'Code Editor',
