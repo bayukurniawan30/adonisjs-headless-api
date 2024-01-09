@@ -24,7 +24,7 @@ class default_1 extends Seeder_1.default {
                 slug: Helpers_1.string.dashCase('Date Picker'),
                 additionalText: 'Pick a date',
                 metadata: {
-                    dateFormat: 'YYYY-MM-DD',
+                    format: 'YYYY-MM-DD',
                 },
             },
             {
@@ -32,7 +32,7 @@ class default_1 extends Seeder_1.default {
                 slug: Helpers_1.string.dashCase('Time Picker'),
                 additionalText: 'Pick a time',
                 metadata: {
-                    dateFormat: 'HH:mm',
+                    format: 'HH:mm',
                 },
             },
             {

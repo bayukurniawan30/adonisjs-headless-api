@@ -20,7 +20,7 @@ export default class extends BaseSeeder {
         slug: string.dashCase('Date Picker'),
         additionalText: 'Pick a date',
         metadata: {
-          dateFormat: 'YYYY-MM-DD',
+          format: 'YYYY-MM-DD',
         },
       },
       {
@@ -28,7 +28,7 @@ export default class extends BaseSeeder {
         slug: string.dashCase('Time Picker'),
         additionalText: 'Pick a time',
         metadata: {
-          dateFormat: 'HH:mm',
+          format: 'HH:mm',
         },
       },
       {
