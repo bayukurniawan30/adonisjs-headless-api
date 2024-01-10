@@ -40,6 +40,8 @@ Route.group(() => {
     Route.get('/collections/:id/items', 'CollectionsController.items')
     Route.resource('singletons', 'SingletonsController').apiOnly()
     Route.get('/singletons/:id/item', 'SingletonsController.item')
+    Route.post('/singletons/:id/item', 'SingletonsController.addItem')
+    Route.put('/singletons/:id/item/:itemId', 'SingletonsController.updateItem')
     Route.resource('available-fields', 'AvailableFieldsController')
     Route.resource('settings', 'SettingsController').apiOnly().only(['index', 'show', 'update'])
   }).middleware('auth')

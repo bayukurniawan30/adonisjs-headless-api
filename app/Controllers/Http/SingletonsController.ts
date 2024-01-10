@@ -2,6 +2,7 @@ import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { rules, schema } from '@ioc:Adonis/Core/Validator'
 import Singleton from 'App/Models/Singleton'
 import CrudController from './CrudController'
+import SingletonItem from 'App/Models/SingletonItem'
 
 export default class SingletonsController extends CrudController {
   protected model = Singleton
@@ -118,6 +119,69 @@ export default class SingletonsController extends CrudController {
     query.where('id', request.param('id'))
 
     const result = await query.firstOrFail()
+    return response.status(200).json(result)
+  }
+
+  public async addItem({ request, response }: HttpContextContract) {
+    const validatedSchema = schema.create({
+      content: schema.string(),
+    })
+    const payload = await request.validate({ schema: validatedSchema })
+
+    let parseContent
+    let content = []
+
+    if (payload.content && payload.content !== '') {
+      parseContent = JSON.parse(payload.content)
+
+      if (parseContent.length > 0) {
+        content = parseContent.map((ct: { id: string; value: string }) => ({
+          id: ct.id,
+          value: ct.value,
+        }))
+      }
+    }
+
+    const model = SingletonItem
+    const result = await model.create({
+      singletonId: request.param('id'),
+      content: JSON.stringify(content),
+    })
+
+    return response.status(201).json(result)
+  }
+
+  public async updateItem({ request, response }: HttpContextContract) {
+    const validatedSchema = schema.create({
+      content: schema.string(),
+    })
+    const payload = await request.validate({ schema: validatedSchema })
+
+    let parseContent
+    let content = []
+
+    if (payload.content && payload.content !== '') {
+      parseContent = JSON.parse(payload.content)
+
+      if (parseContent.length > 0) {
+        content = parseContent.map((ct: { id: string; value: string }) => ({
+          id: ct.id,
+          value: ct.value,
+        }))
+      }
+    }
+
+    const model = SingletonItem
+    const data = await model.findOrFail(request.param('itemId'))
+
+    const updatedData = {
+      singletonId: request.param('id'),
+      content: JSON.stringify(content),
+    }
+    data.merge(updatedData)
+
+    const result = await data.save()
+
     return response.status(200).json(result)
   }
 }

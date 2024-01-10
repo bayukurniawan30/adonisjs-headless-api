@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Validator_1 = global[Symbol.for('ioc.use')]("Adonis/Core/Validator");
 const Singleton_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Singleton"));
 const CrudController_1 = __importDefault(require("./CrudController"));
+const SingletonItem_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/SingletonItem"));
 class SingletonsController extends CrudController_1.default {
     constructor() {
         super(...arguments);
@@ -102,6 +103,55 @@ class SingletonsController extends CrudController_1.default {
         }
         query.where('id', request.param('id'));
         const result = await query.firstOrFail();
+        return response.status(200).json(result);
+    }
+    async addItem({ request, response }) {
+        const validatedSchema = Validator_1.schema.create({
+            content: Validator_1.schema.string(),
+        });
+        const payload = await request.validate({ schema: validatedSchema });
+        let parseContent;
+        let content = [];
+        if (payload.content && payload.content !== '') {
+            parseContent = JSON.parse(payload.content);
+            if (parseContent.length > 0) {
+                content = parseContent.map((ct) => ({
+                    id: ct.id,
+                    value: ct.value,
+                }));
+            }
+        }
+        const model = SingletonItem_1.default;
+        const result = await model.create({
+            singletonId: request.param('id'),
+            content: JSON.stringify(content),
+        });
+        return response.status(201).json(result);
+    }
+    async updateItem({ request, response }) {
+        const validatedSchema = Validator_1.schema.create({
+            content: Validator_1.schema.string(),
+        });
+        const payload = await request.validate({ schema: validatedSchema });
+        let parseContent;
+        let content = [];
+        if (payload.content && payload.content !== '') {
+            parseContent = JSON.parse(payload.content);
+            if (parseContent.length > 0) {
+                content = parseContent.map((ct) => ({
+                    id: ct.id,
+                    value: ct.value,
+                }));
+            }
+        }
+        const model = SingletonItem_1.default;
+        const data = await model.findOrFail(request.param('itemId'));
+        const updatedData = {
+            singletonId: request.param('id'),
+            content: JSON.stringify(content),
+        };
+        data.merge(updatedData);
+        const result = await data.save();
         return response.status(200).json(result);
     }
 }

@@ -18,6 +18,8 @@ Route_1.default.group(() => {
         Route_1.default.get('/collections/:id/items', 'CollectionsController.items');
         Route_1.default.resource('singletons', 'SingletonsController').apiOnly();
         Route_1.default.get('/singletons/:id/item', 'SingletonsController.item');
+        Route_1.default.post('/singletons/:id/item', 'SingletonsController.addItem');
+        Route_1.default.put('/singletons/:id/item/:itemId', 'SingletonsController.updateItem');
         Route_1.default.resource('available-fields', 'AvailableFieldsController');
         Route_1.default.resource('settings', 'SettingsController').apiOnly().only(['index', 'show', 'update']);
     }).middleware('auth');
