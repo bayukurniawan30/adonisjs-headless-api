@@ -36,6 +36,20 @@ export default class extends BaseSeeder {
           },
         ]),
       },
+      {
+        key: 'currency-format',
+        value: 'SGD',
+        selectable: JSON.stringify([
+          {
+            key: 'SGD',
+            value: 'SGD',
+          },
+          {
+            key: 'USD',
+            value: 'USD',
+          },
+        ]),
+      },
     ])
   }
 }

@@ -44,3 +44,7 @@ type Filter = {
 ### Auth
 
 Provided with built in Auth, using `@adonisjs/auth` package. Read more about AdonisJS Auth [here](https://docs.adonisjs.com/guides/auth/introduction)
+
+### Update
+
+Something new here...
